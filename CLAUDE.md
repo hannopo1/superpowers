@@ -21,7 +21,7 @@ The plugin itself is zero-dependency by design (see "What We Will Not Accept" be
 - `hooks/` — Claude Code `SessionStart` hook (`hooks.json` → `run-hook.cmd` → `hooks/session-start`) that injects the bootstrap on startup/clear/compact; `hooks-cursor.json` is the Cursor variant
 - `AGENTS.md` is a symlink to `CLAUDE.md` (same content for Codex/other AGENTS.md-reading harnesses); `GEMINI.md` uses Gemini CLI's `@import` syntax to pull in `skills/using-superpowers/SKILL.md` directly
 
-A harness integration only counts as "real" if it loads this bootstrap automatically at session start — see "New Harness Support" below for the acceptance test used to verify that.
+A harness integration only counts as "real" if it loads this bootstrap automatically at session start — see "New Harness Support" below for the acceptance test used to verify that. Porting to a new harness follows `docs/porting-to-a-new-harness.md`, which defines three integration "shapes," a capability checklist, and the same mandatory acceptance test.
 
 **The Codex plugin is generated, not hand-maintained.** `scripts/sync-to-codex-plugin.sh` syncs a checkout's tracked plugin content (including `.codex-plugin/` and `assets/`) into the separate `prime-radiant-inc/openai-codex-plugins` fork and opens a PR; it's deterministic (same source SHA → identical diff). `scripts/package-codex-plugin.sh` packages the Codex plugin as a zip.
 
@@ -32,6 +32,8 @@ A harness integration only counts as "real" if it loads this bootstrap automatic
 - `evals/` — behavioral evals that drive real tmux sessions of Claude Code/Codex/Gemini CLI with an LLM actor and verifier, judging whether the agent actually followed a skill. This lives in a separate repo (`prime-radiant-inc/superpowers-evals`), cloned locally into `evals/` (gitignored — not part of the published plugin). Scenarios are `evals/scenarios/*.yaml`, driven by the `drill` harness.
 
 Skill changes are judged by evals, not by unit tests — there's no way to "type-check" a Markdown instruction, so a skill edit is only validated by running it against real sessions (see "Skill Changes Require Evaluation" below).
+
+**Past design work is archived, not just released.** `docs/superpowers/specs/` and `docs/superpowers/plans/` hold dated design-doc/implementation-plan pairs for past features (e.g. the brainstorm visual companion, SDD rework, worktree changes) — nothing else in the repo links to this path, so this is the pointer.
 
 ## Commands
 
@@ -46,6 +48,8 @@ tests/kimi/run-tests.sh
 tests/antigravity/run-tests.sh
 tests/explicit-skill-requests/run-all.sh
 cd tests/brainstorm-server && npm test               # node suite for brainstorm-server JS
+node tests/pi/test-pi-extension.mjs                   # pi extension lifecycle/dedup/compaction (node:test)
+bash tests/codex/test-marketplace-manifest.sh         # and test-package-codex-plugin.sh — no run-*.sh wrapper
 ```
 
 Shell lint (used by `tests/shell-lint/`):
